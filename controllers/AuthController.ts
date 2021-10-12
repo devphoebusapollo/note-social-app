@@ -136,7 +136,7 @@ const userController = {
                             maxAge: 7*24*60*60*1000
                         });
 
-                        return res.status(200).json(result);
+                        return res.status(200).json({msg: "Login successful"});
 
                     } catch(error) {
                         console.log(error);
@@ -224,8 +224,8 @@ const userController = {
         })
     },
     getUser: (req: Request, res: Response) => {
-        const id = req.params.id;
         pool.getConnection((err: any, connection: any) => {
+            const id = req.params.id;
             if(err) throw err;
             connection.query('SELECT * from users WHERE id = ?', id, (err: any, result: any) => {
                 connection.release();
@@ -237,6 +237,23 @@ const userController = {
                 }
             })
         })
+    },
+    getUserInfo: async (req: Request | any, res: Response) => {
+        try {
+            pool.getConnection(async (err: any, connection: any) => {
+                if(err) throw err;
+                const {id} = req.user;
+                connection.query('SELECT username, email, admin, city, province, country from users WHERE id = ?', id, async (err: any, user: any) => {
+                    try {
+                        return res.status(200).json(user);
+                    } catch (error: any) {
+                        return res.status(500).json({msg: error.message});
+                    }
+                })
+            })
+        } catch (error: any) {
+            return res.status(500).json({msg: error.message});
+        }
     },
     updateUser: (req: Request, res: Response) => {
         pool.getConnection((err: any, connection: any) => {

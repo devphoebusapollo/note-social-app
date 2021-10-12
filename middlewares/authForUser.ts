@@ -1,9 +1,9 @@
 const jwt = require('jsonwebtoken');
 import {Request, Response, NextFunction} from 'express';
 
-const auth = (req: Request | any, res: Response, next: NextFunction) => {
+const authGetUser = (req: Request | any, res: Response, next: NextFunction) => {
     try {
-        const token = req.header('Authorization');
+        const {token} = req.body;
         if(!token) return res.status(400).json({msg: 'Invalid Authentication.'});
 
         jwt.verify(token, process.env.ACCESS_TOKEN as string, (err: any, user: any) => {
@@ -18,4 +18,4 @@ const auth = (req: Request | any, res: Response, next: NextFunction) => {
         return res.status(500).json({msg: error.message});
     }
 }
-module.exports = auth;
+module.exports = authGetUser;
