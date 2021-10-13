@@ -245,6 +245,7 @@ const userController = {
                 const {id} = req.user;
                 connection.query('SELECT username, email, admin, city, province, country from users WHERE id = ?', id, async (err: any, user: any) => {
                     try {
+                        if(err) throw err;
                         return res.status(200).json(user);
                     } catch (error: any) {
                         return res.status(500).json({msg: error.message});
